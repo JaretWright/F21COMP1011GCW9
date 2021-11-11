@@ -25,6 +25,7 @@ public class MagicData {
             int studentNum = 10001;
             while (scanner.hasNext()) {
                 String[] fullName = scanner.nextLine().split(" ");
+                //"Fred Flintstone" -> ["Fred","Flintstone"]
                 students.add(new Student(studentNum++, fullName[0], fullName[1]));
             }
         } catch (FileNotFoundException e)

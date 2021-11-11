@@ -77,7 +77,8 @@ public class StudentUpdateController implements Initializable {
         avgGradeCol.setCellValueFactory(new PropertyValueFactory<>("avgGradeString"));
         numOfCoursesCol.setCellValueFactory(new PropertyValueFactory<>("numOfCourses"));
         tableView.getItems().addAll(allStudents);
-        rowsReturnedLabel.setText("Rows Returned: " + tableView.getItems().size());
+        updateLabels();
+
 
         //configure the TableView selection mode
         tableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
@@ -116,6 +117,27 @@ public class StudentUpdateController implements Initializable {
                 spinnerEditor.setText(oldValue);
             }
         });
+
+        //Configure the search textfield to filter the list based on the students
+        //first name, last name and student number
+        searchTextField.textProperty().addListener((obs, oldValue, searchText)->{
+//            ArrayList<Student> filteredList = new ArrayList<>();
+//            for (Student student : allStudents)
+//            {
+//                if (student.contains(searchText))
+//                    filteredList.add(student);
+//            }
+//            tableView.getItems().clear();
+//            tableView.getItems().addAll(filteredList);
+//            updateLabels();
+
+            //so clean and easy to read...Attila would have used it first
+            tableView.getItems().clear();
+            tableView.getItems().addAll(allStudents.stream()
+                                            .filter(student -> student.contains(searchText))
+                                            .collect(Collectors.toList()));
+            updateLabels();
+        });
     }
 
     /**
@@ -131,11 +153,21 @@ public class StudentUpdateController implements Initializable {
 
     private void updateLabels()
     {
+        rowsReturnedLabel.setText("Rows Returned: " + tableView.getItems().size());
     }
 
     @FXML
     private void addGrade()
     {
+        Student student = tableView.getSelectionModel().getSelectedItem();
+        Course course = coursesComboBox.getValue();
+        int grade = gradeSpinner.getValue();
+
+        if (student != null && course != null && grade>=0 && grade<=100)
+            student.addCourse(course, grade);
+
+        //this will reload the table with the new student info
+        tableView.refresh();
     }
 
 }
